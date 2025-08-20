@@ -1,0 +1,37 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: MyString
+  age: 1
+  email: MyString
+  phone: MyString
+  privacy_consent: false
+  marketing_consent: false
+  notes: MyText
+  flexion_extension: 1
+  arms_overhead: 1
+  spine_rotation_right: 1
+  spine_rotation_left: 1
+  deep_squat: 1
+  hands_behind_back_right: 1
+  hands_behind_back_left: 1
+  straight_leg_raise_right: 1
+  straight_leg_raise_left: 1
+
+two:
+  name: MyString
+  age: 1
+  email: MyString
+  phone: MyString
+  privacy_consent: false
+  marketing_consent: false
+  notes: MyText
+  flexion_extension: 1
+  arms_overhead: 1
+  spine_rotation_right: 1
+  spine_rotation_left: 1
+  deep_squat: 1
+  hands_behind_back_right: 1
+  hands_behind_back_left: 1
+  straight_leg_raise_right: 1
+  straight_leg_raise_left: 1

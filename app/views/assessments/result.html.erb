@@ -1,0 +1,294 @@
+<div class="max-w-5xl mx-auto space-y-8">
+  <!-- Header with celebration -->
+  <div class="text-center bg-gradient-to-br from-blue-50 to-purple-50 rounded-xl shadow-lg p-8">
+    <div class="text-6xl mb-4">🎉</div>
+    <h1 class="text-4xl font-bold text-gray-800 mb-4">I Tuoi Risultati</h1>
+    <div class="space-y-2">
+      <p class="text-xl text-gray-700">
+        <strong><%= @assessment.name %></strong> • <%= @assessment.age %> anni
+      </p>
+      <p class="text-sm text-gray-600">📧 <%= @assessment.email %></p>
+      <% if @assessment.phone_number.present? %>
+        <p class="text-sm text-gray-600">
+          📱 <%= @assessment.country_flag %> <%= @assessment.full_phone_number %>
+        </p>
+      <% end %>
+      <p class="text-sm text-gray-500">
+        Completato il <%= @assessment.completed_at&.strftime("%d/%m/%Y alle %H:%M") %>
+      </p>
+    </div>
+  </div>
+
+  <!-- Main Results Grid -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <!-- Score Card -->
+    <div class="bg-white rounded-xl shadow-lg p-8">
+      <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">🎯 Punteggio Totale</h2>
+      
+      <div class="text-center mb-6">
+        <div class="text-8xl font-bold text-purple-600 mb-2"><%= @assessment.total_score %></div>
+        <div class="text-2xl text-gray-600 mb-4">su 27 punti</div>
+        
+        <!-- Percentage circle or bar -->
+        <div class="inline-flex items-center space-x-4 bg-purple-50 px-6 py-3 rounded-full">
+          <span class="text-purple-800 font-semibold">Percentuale:</span>
+          <span class="text-2xl font-bold text-purple-600">
+            <%= sprintf("%.1f", @assessment.total_score / 27.0 * 100) %>%
+          </span>
+        </div>
+      </div>
+
+      <!-- Score breakdown -->
+      <div class="grid grid-cols-2 gap-4 text-center text-sm">
+        <div class="bg-gray-50 rounded-lg p-4">
+          <div class="text-2xl font-bold text-blue-600">9</div>
+          <div class="text-gray-600">Esercizi</div>
+        </div>
+        <div class="bg-gray-50 rounded-lg p-4">
+          <div class="text-2xl font-bold text-green-600">
+            <%= sprintf("%.1f", @assessment.total_score / 9.0) %>
+          </div>
+          <div class="text-gray-600">Media per esercizio</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mobility Level Card -->
+    <div class="bg-white rounded-xl shadow-lg p-8">
+      <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">📊 Livello di Mobilità</h2>
+      
+      <!-- Main level display -->
+      <div class="<%= @assessment.color_class %> border-2 rounded-xl p-6 mb-6 text-center">
+        <div class="text-4xl font-bold mb-3">
+          <% case @mobility_data[:color] %>
+          <% when "red" %>
+            🔴 Mobilità <%= @mobility_data[:level] %>
+          <% when "yellow" %>
+            🟡 Mobilità <%= @mobility_data[:level] %>
+          <% when "green" %>
+            🟢 Mobilità <%= @mobility_data[:level] %>
+          <% end %>
+        </div>
+        <p class="text-lg font-medium"><%= @mobility_data[:description] %></p>
+      </div>
+
+      <!-- Scale reference -->
+      <div class="space-y-3 text-sm">
+        <div class="flex justify-between items-center p-3 rounded-lg <%= @assessment.total_score <= 9 ? 'bg-red-100 border-2 border-red-300' : 'bg-gray-100' %>">
+          <span class="flex items-center space-x-2">
+            <span>🔴</span>
+            <span class="font-medium">0-9 punti: Limitata</span>
+          </span>
+          <% if @assessment.total_score <= 9 %>
+            <span class="font-bold text-red-800">← Tu sei qui</span>
+          <% end %>
+        </div>
+        
+        <div class="flex justify-between items-center p-3 rounded-lg <%= @assessment.total_score.between?(10, 18) ? 'bg-yellow-100 border-2 border-yellow-300' : 'bg-gray-100' %>">
+          <span class="flex items-center space-x-2">
+            <span>🟡</span>
+            <span class="font-medium">10-18 punti: Media</span>
+          </span>
+          <% if @assessment.total_score.between?(10, 18) %>
+            <span class="font-bold text-yellow-800">← Tu sei qui</span>
+          <% end %>
+        </div>
+        
+        <div class="flex justify-between items-center p-3 rounded-lg <%= @assessment.total_score >= 19 ? 'bg-green-100 border-2 border-green-300' : 'bg-gray-100' %>">
+          <span class="flex items-center space-x-2">
+            <span>🟢</span>
+            <span class="font-medium">19-27 punti: Buona</span>
+          </span>
+          <% if @assessment.total_score >= 19 %>
+            <span class="font-bold text-green-800">← Tu sei qui</span>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Detailed Exercise Results -->
+  <div class="bg-white rounded-xl shadow-lg p-8">
+    <h2 class="text-2xl font-bold text-gray-800 mb-6">📋 Dettaglio per Esercizio</h2>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <% Assessment::EXERCISES.each_with_index do |(step_num, exercise), index| %>
+        <% score = @assessment.send(exercise[:field]) %>
+        <div class="border-2 border-gray-200 rounded-lg p-4 hover:shadow-md transition-all">
+          <div class="flex justify-between items-start mb-3">
+            <h3 class="font-bold text-gray-800 text-sm leading-tight">
+              <%= index + 1 %>. <%= exercise[:title] %>
+            </h3>
+            <div class="flex items-center space-x-1 ml-2">
+              <span class="text-3xl font-bold <%= 
+                case score
+                when 3 then 'text-green-600'
+                when 2 then 'text-blue-600'
+                when 1 then 'text-yellow-600'
+                when 0 then 'text-red-600'
+                end %>">
+                <%= score %>
+              </span>
+              <span class="text-gray-400">/3</span>
+            </div>
+          </div>
+          
+          <p class="text-xs text-gray-600 mb-3 leading-relaxed">
+            <%= exercise[:criteria][score] %>
+          </p>
+          
+          <!-- Progress bar -->
+          <div class="w-full bg-gray-200 rounded-full h-3 mb-2">
+            <div class="h-3 rounded-full transition-all duration-500 <%= 
+              case score
+              when 3 then 'bg-green-500'
+              when 2 then 'bg-blue-500'
+              when 1 then 'bg-yellow-500'
+              when 0 then 'bg-red-500'
+              end %>" 
+                 style="width: <%= (score / 3.0 * 100).round %>%"></div>
+          </div>
+          
+          <div class="text-right">
+            <span class="text-xs font-bold px-2 py-1 rounded-full <%= 
+              case score
+              when 3 then 'bg-green-100 text-green-800'
+              when 2 then 'bg-blue-100 text-blue-800'
+              when 1 then 'bg-yellow-100 text-yellow-800'
+              when 0 then 'bg-red-100 text-red-800'
+              end %>">
+              <%= 
+                case score
+                when 3 then "Ottimo"
+                when 2 then "Buono" 
+                when 1 then "Sufficiente"
+                when 0 then "Da migliorare"
+                end 
+              %>
+            </span>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Recommendations -->
+  <div class="bg-white rounded-xl shadow-lg p-8">
+    <h2 class="text-2xl font-bold text-gray-800 mb-6">💡 Raccomandazioni Personalizzate</h2>
+    
+    <% case @mobility_data[:color] %>
+    <% when "red" %>
+      <div class="bg-red-50 border-l-4 border-red-500 rounded-lg p-6 mb-6">
+        <h3 class="text-xl font-bold text-red-900 mb-4">🔴 Piano per Mobilità Limitata</h3>
+        <div class="space-y-3 text-red-800">
+          <p>• <strong>Consulenza professionale:</strong> Raccomandiamo una valutazione con fisioterapista</p>
+          <p>• <strong>Esercizi graduali:</strong> Inizia con movimenti dolci per 15-20 minuti al giorno</p>
+          <p>• <strong>Monitoraggio:</strong> Ripeti il test tra 6-8 settimane per vedere i progressi</p>
+          <p>• <strong>Attenzione:</strong> Non forzare mai i movimenti, ascolta il tuo corpo</p>
+        </div>
+      </div>
+    <% when "yellow" %>
+      <div class="bg-yellow-50 border-l-4 border-yellow-500 rounded-lg p-6 mb-6">
+        <h3 class="text-xl font-bold text-yellow-900 mb-4">🟡 Piano per Mobilità Media</h3>
+        <div class="space-y-3 text-yellow-800">
+          <p>• <strong>Corsi di gruppo:</strong> Partecipa a ginnastica posturale, yoga o pilates</p>
+          <p>• <strong>Routine quotidiana:</strong> 10-15 minuti di stretching mirato</p>
+          <p>• <strong>Focus specifico:</strong> Concentrati sugli esercizi con punteggi più bassi</p>
+          <p>• <strong>Progressione:</strong> Aumenta gradualmente intensità e durata</p>
+        </div>
+      </div>
+    <% when "green" %>
+      <div class="bg-green-50 border-l-4 border-green-500 rounded-lg p-6 mb-6">
+        <h3 class="text-xl font-bold text-green-900 mb-4">🟢 Programma di Mantenimento</h3>
+        <div class="space-y-3 text-green-800">
+          <p>• <strong>Ottimo lavoro!</strong> Continua con la tua routine attuale</p>
+          <p>• <strong>Sfide avanzate:</strong> Prova sport dinamici o movimenti più complessi</p>
+          <p>• <strong>Mantenimento:</strong> 5-10 minuti di stretching quotidiano</p>
+          <p>• <strong>Controllo regolare:</strong> Ripeti il test ogni 3 mesi</p>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Actions -->
+  <div class="bg-white rounded-xl shadow-lg p-8">
+    <h2 class="text-2xl font-bold text-gray-800 mb-6">📤 Azioni</h2>
+    
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+      <%= link_to root_path, 
+          class: "bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-6 rounded-lg text-center transition-all duration-200 flex items-center justify-center space-x-2" do %>
+        <span>🔄</span>
+        <span>Nuovo Test</span>
+      <% end %>
+      
+      <button onclick="window.print()" 
+              class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-4 px-6 rounded-lg transition-all duration-200 flex items-center justify-center space-x-2">
+        <span>🖨️</span>
+        <span>Stampa PDF</span>
+      </button>
+      
+      <button onclick="shareResults()" 
+              class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-4 px-6 rounded-lg transition-all duration-200 flex items-center justify-center space-x-2">
+        <span>📱</span>
+        <span>Condividi</span>
+      </button>
+      
+      <a href="https://igieneposturale.it/contatti" 
+         class="bg-green-600 hover:bg-green-700 text-white font-bold py-4 px-6 rounded-lg text-center transition-all duration-200 flex items-center justify-center space-x-2">
+        <span>📞</span>
+        <span>Contattaci</span>
+      </a>
+    </div>
+    
+    <!-- Share URL -->
+    <div class="bg-gray-50 rounded-lg p-4">
+      <label class="block text-sm font-medium text-gray-700 mb-2">🔗 Condividi i tuoi risultati:</label>
+      <div class="flex">
+        <input type="text" 
+               value="<%= result_assessment_url(@assessment) %>" 
+               id="shareUrl"
+               class="flex-1 px-3 py-2 border border-gray-300 rounded-l-lg text-sm bg-white" 
+               readonly>
+        <button onclick="copyUrl()" 
+                class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-r-lg text-sm transition-all duration-200">
+          Copia
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function shareResults() {
+    const text = `🎯 Ho completato il test di mobilità articolare!\n\nRisultato: <%= @assessment.total_score %>/27 punti (<%= sprintf("%.1f", @assessment.total_score / 27.0 * 100) %>%)\n<%= @mobility_data[:color] == 'red' ? '🔴' : @mobility_data[:color] == 'yellow' ? '🟡' : '🟢' %> Livello: <%= @mobility_data[:level] %>\n\n<%= @mobility_data[:description] %>\n\n✨ Fai anche tu il test gratuito!`;
+    
+    if (navigator.share) {
+      navigator.share({
+        title: 'I miei risultati del test di mobilità articolare',
+        text: text,
+        url: '<%= result_assessment_url(@assessment) %>'
+      });
+    } else {
+      navigator.clipboard.writeText(text + '\n\n' + '<%= result_assessment_url(@assessment) %>').then(() => {
+        alert('✅ Risultati copiati negli appunti!');
+      });
+    }
+  }
+  
+  function copyUrl() {
+    const urlInput = document.getElementById('shareUrl');
+    urlInput.select();
+    urlInput.setSelectionRange(0, 99999); // For mobile devices
+    document.execCommand('copy');
+    
+    // Visual feedback
+    const button = event.target;
+    const originalText = button.textContent;
+    button.textContent = '✅ Copiato!';
+    button.classList.add('bg-green-500');
+    setTimeout(() => {
+      button.textContent = originalText;
+      button.classList.remove('bg-green-500');
+    }, 2000);
+  }
+</script>

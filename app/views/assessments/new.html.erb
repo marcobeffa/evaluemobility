@@ -1,0 +1,314 @@
+<!--# app/views/assessments/new.html.erb-->
+<div class="max-w-4xl mx-auto bg-white rounded-lg shadow-lg p-6">
+  <div class="mb-6">
+    <h2 class="text-2xl font-semibold text-gray-800 mb-4">Test di Autovalutazione</h2>
+    <p class="text-gray-600">
+      Questo test ti aiuta a valutare la tua mobilità articolare generale in modo semplice e autonomo.
+      Per ogni movimento, assegna un punteggio da 0 a 3 secondo i criteri riportati.
+    </p>
+    <div class="bg-yellow-100 border-l-4 border-yellow-500 p-4 mt-4">
+      <p class="text-yellow-800">
+        ⚠️ <strong>Importante:</strong> Esegui ogni movimento lentamente, senza forzare. 
+        Se avverti dolore, interrompi il test.
+      </p>
+    </div>
+  </div>
+
+  <%= form_with model: @assessment, local: true, class: "space-y-6" do |form| %>
+    <% if @assessment.errors.any? %>
+      <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+        <h4 class="font-bold">Errori nel form:</h4>
+        <ul class="list-disc list-inside">
+          <% @assessment.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <!-- Personal Info -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+      <div>
+        <%= form.label :name, "Nome e Cognome *:", class: "block text-sm font-medium text-gray-700 mb-2" %>
+        <%= form.text_field :name, required: true, class: "w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" %>
+      </div>
+      
+      <div>
+        <%= form.label :age, "Età *:", class: "block text-sm font-medium text-gray-700 mb-2" %>
+        <%= form.number_field :age, required: true, min: 1, max: 120, class: "w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" %>
+      </div>
+      
+      <div>
+        <%= form.label :email, "Email:", class: "block text-sm font-medium text-gray-700 mb-2" %>
+        <%= form.email_field :email, class: "w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500", placeholder: "esempio@email.com" %>
+        <p class="text-xs text-gray-500 mt-1">Per ricevere i risultati e promemoria re-test</p>
+      </div>
+      
+      <div>
+        <%= form.label :phone, "Telefono:", class: "block text-sm font-medium text-gray-700 mb-2" %>
+        <%= form.telephone_field :phone, class: "w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500", placeholder: "+39 123 456 7890" %>
+        <p class="text-xs text-gray-500 mt-1">Per eventuali follow-up o chiarimenti</p>
+      </div>
+    </div>
+
+    <!-- Privacy Consent -->
+    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+      <h3 class="font-semibold text-blue-900 mb-3">📋 Consenso Privacy</h3>
+      
+      <div class="space-y-3">
+        <label class="flex items-start space-x-3 cursor-pointer">
+          <%= form.check_box :privacy_consent, required: true, class: "mt-1 text-blue-600" %>
+          <span class="text-sm text-blue-800">
+            <strong>Accetto*</strong> il trattamento dei miei dati personali per la valutazione posturale e l'invio dei risultati, 
+            come da <a href="#" class="underline">informativa privacy</a>.
+          </span>
+        </label>
+        
+        <label class="flex items-start space-x-3 cursor-pointer">
+          <%= form.check_box :marketing_consent, class: "mt-1 text-blue-600" %>
+          <span class="text-sm text-blue-800">
+            Accetto di ricevere comunicazioni su servizi di postura e benessere 
+            (newsletter, promemoria, offerte personalizzate).
+          </span>
+        </label>
+      </div>
+    </div>
+
+    <!-- Exercise 1: Flexion Extension -->
+    <div class="border border-gray-200 rounded-lg p-6">
+      <h3 class="text-lg font-semibold mb-4">1. Flesso-estensione in avanti (da in piedi)</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="space-y-2">
+          <% [
+            ["0", "sopra ginocchia"],
+            ["1", "tibie"], 
+            ["2", "caviglie"],
+            ["3", "mani a terra"]
+          ].each do |value, description| %>
+            <label class="flex items-center space-x-2 cursor-pointer">
+              <%= form.radio_button :flexion_extension, value, class: "text-blue-600" %>
+              <span class="text-sm"><strong><%= value %>:</strong> <%= description %></span>
+            </label>
+          <% end %>
+        </div>
+        <div class="text-center">
+          <div class="w-32 h-32 bg-gray-200 rounded-lg flex items-center justify-center mx-auto">
+            <span class="text-gray-500">📸 Immagine esercizio</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Exercise 2: Arms Overhead -->
+    <div class="border border-gray-200 rounded-lg p-6">
+      <h3 class="text-lg font-semibold mb-4">2. Braccia sopra la testa (in piedi)</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="space-y-2">
+          <% [
+            ["0", "non oltre spalle"],
+            ["1", "con compensi"],
+            ["2", "vicino orecchie"],
+            ["3", "allineate senza compensi"]
+          ].each do |value, description| %>
+            <label class="flex items-center space-x-2 cursor-pointer">
+              <%= form.radio_button :arms_overhead, value, class: "text-blue-600" %>
+              <span class="text-sm"><strong><%= value %>:</strong> <%= description %></span>
+            </label>
+          <% end %>
+        </div>
+        <div class="text-center">
+          <div class="w-32 h-32 bg-gray-200 rounded-lg flex items-center justify-center mx-auto">
+            <span class="text-gray-500">📸 Immagine esercizio</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Exercise 3A: Spine Rotation Right -->
+    <div class="border border-gray-200 rounded-lg p-6">
+      <h3 class="text-lg font-semibold mb-4">3A. Rotazione globale del rachide (collo + tronco) - Destra</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="space-y-2">
+          <% [
+            ["0", "limitata"],
+            ["1", "ruoto 90°"],
+            ["2", "quasi dietro 135°"],
+            ["3", "ruoto completamente dietro 180°"]
+          ].each do |value, description| %>
+            <label class="flex items-center space-x-2 cursor-pointer">
+              <%= form.radio_button :spine_rotation_right, value, class: "text-blue-600" %>
+              <span class="text-sm"><strong><%= value %>:</strong> <%= description %></span>
+            </label>
+          <% end %>
+        </div>
+        <div class="text-center">
+          <div class="w-32 h-32 bg-gray-200 rounded-lg flex items-center justify-center mx-auto">
+            <span class="text-gray-500">📸 Immagine esercizio</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Exercise 3B: Spine Rotation Left -->
+    <div class="border border-gray-200 rounded-lg p-6">
+      <h3 class="text-lg font-semibold mb-4">3B. Rotazione globale del rachide (collo + tronco) - Sinistra</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="space-y-2">
+          <% [
+            ["0", "limitata"],
+            ["1", "ruoto 90°"],
+            ["2", "quasi dietro 135°"],
+            ["3", "ruoto completamente dietro 180°"]
+          ].each do |value, description| %>
+            <label class="flex items-center space-x-2 cursor-pointer">
+              <%= form.radio_button :spine_rotation_left, value, class: "text-blue-600" %>
+              <span class="text-sm"><strong><%= value %>:</strong> <%= description %></span>
+            </label>
+          <% end %>
+        </div>
+        <div class="text-center">
+          <div class="w-32 h-32 bg-gray-200 rounded-lg flex items-center justify-center mx-auto">
+            <span class="text-gray-500">📸 Immagine esercizio</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Exercise 4: Deep Squat -->
+    <div class="border border-gray-200 rounded-lg p-6">
+      <h3 class="text-lg font-semibold mb-4">4. Squat profondo (a corpo libero)</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="space-y-2">
+          <% [
+            ["0", "non scende"],
+            ["1", "instabile"],
+            ["2", "quasi fondo"],
+            ["3", "fondo stabile"]
+          ].each do |value, description| %>
+            <label class="flex items-center space-x-2 cursor-pointer">
+              <%= form.radio_button :deep_squat, value, class: "text-blue-600" %>
+              <span class="text-sm"><strong><%= value %>:</strong> <%= description %></span>
+            </label>
+          <% end %>
+        </div>
+        <div class="text-center">
+          <div class="w-32 h-32 bg-gray-200 rounded-lg flex items-center justify-center mx-auto">
+            <span class="text-gray-500">📸 Immagine esercizio</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Exercise 5A: Hands Behind Back Right -->
+    <div class="border border-gray-200 rounded-lg p-6">
+      <h3 class="text-lg font-semibold mb-4">5A. Mani dietro la schiena (destra sopra)</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="space-y-2">
+          <% [
+            ["0", ">20 cm"],
+            ["1", "10–20 cm"],
+            ["2", "5–10 cm"],
+            ["3", "si toccano"]
+          ].each do |value, description| %>
+            <label class="flex items-center space-x-2 cursor-pointer">
+              <%= form.radio_button :hands_behind_back_right, value, class: "text-blue-600" %>
+              <span class="text-sm"><strong><%= value %>:</strong> <%= description %></span>
+            </label>
+          <% end %>
+        </div>
+        <div class="text-center">
+          <div class="w-32 h-32 bg-gray-200 rounded-lg flex items-center justify-center mx-auto">
+            <span class="text-gray-500">📸 Immagine esercizio</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Exercise 5B: Hands Behind Back Left -->
+    <div class="border border-gray-200 rounded-lg p-6">
+      <h3 class="text-lg font-semibold mb-4">5B. Mani dietro la schiena (sinistra sopra)</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="space-y-2">
+          <% [
+            ["0", ">20 cm"],
+            ["1", "10–20 cm"],
+            ["2", "5–10 cm"],
+            ["3", "si toccano"]
+          ].each do |value, description| %>
+            <label class="flex items-center space-x-2 cursor-pointer">
+              <%= form.radio_button :hands_behind_back_left, value, class: "text-blue-600" %>
+              <span class="text-sm"><strong><%= value %>:</strong> <%= description %></span>
+            </label>
+          <% end %>
+        </div>
+        <div class="text-center">
+          <div class="w-32 h-32 bg-gray-200 rounded-lg flex items-center justify-center mx-auto">
+            <span class="text-gray-500">📸 Immagine esercizio</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Exercise 6A: Straight Leg Raise Right -->
+    <div class="border border-gray-200 rounded-lg p-6">
+      <h3 class="text-lg font-semibold mb-4">6A. Sollevamento gamba tesa (supino) - Destra</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="space-y-2">
+          <% [
+            ["0", "<45°"],
+            ["1", "45–75°"],
+            ["2", "75–89°"],
+            ["3", "≥90° senza dolore"]
+          ].each do |value, description| %>
+            <label class="flex items-center space-x-2 cursor-pointer">
+              <%= form.radio_button :straight_leg_raise_right, value, class: "text-blue-600" %>
+              <span class="text-sm"><strong><%= value %>:</strong> <%= description %></span>
+            </label>
+          <% end %>
+        </div>
+        <div class="text-center">
+          <div class="w-32 h-32 bg-gray-200 rounded-lg flex items-center justify-center mx-auto">
+            <span class="text-gray-500">📸 Immagine esercizio</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Exercise 6B: Straight Leg Raise Left -->
+    <div class="border border-gray-200 rounded-lg p-6">
+      <h3 class="text-lg font-semibold mb-4">6B. Sollevamento gamba tesa (supino) - Sinistra</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="space-y-2">
+          <% [
+            ["0", "<45°"],
+            ["1", "45–75°"],
+            ["2", "75–89°"],
+            ["3", "≥90° senza dolore"]
+          ].each do |value, description| %>
+            <label class="flex items-center space-x-2 cursor-pointer">
+              <%= form.radio_button :straight_leg_raise_left, value, class: "text-blue-600" %>
+              <span class="text-sm"><strong><%= value %>:</strong> <%= description %></span>
+            </label>
+          <% end %>
+        </div>
+        <div class="text-center">
+          <div class="w-32 h-32 bg-gray-200 rounded-lg flex items-center justify-center mx-auto">
+            <span class="text-gray-500">📸 Immagine esercizio</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Notes -->
+    <div>
+      <%= form.label :notes, "Note aggiuntive:", class: "block text-sm font-medium text-gray-700 mb-2" %>
+      <%= form.text_area :notes, rows: 3, class: "w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500", placeholder: "Eventuali osservazioni o difficoltà riscontrate..." %>
+    </div>
+
+    <!-- Submit -->
+    <div class="text-center">
+      <%= form.submit "Calcola Risultato", class: "bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg transition duration-200" %>
+    </div>
+  <% end %>
+</div>
+
