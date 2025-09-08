@@ -5,9 +5,9 @@ App Rails per il test di valutazione della mobilità articolare con sistema mult
 ## 🚀 Caratteristiche
 
 - ✅ **Test step-by-step** con barra di progresso
-- ✅ **URL parametrici** (`?esercizio=1,2,3...`) per navigazione diretta
+- ✅ **URL parametrici** (`?test=1,2,3...`) per navigazione diretta
 - ✅ **9 esercizi di valutazione** + raccolta dati personali
-- ✅ **Video dimostrativi** per ogni esercizio
+- ✅ **Video dimostrativi** per ogni test
 - ✅ **Immagini di riferimento** per i punteggi
 - ✅ **Sistema di punteggio** 0-27 punti con classificazione
 - ✅ **Responsive design** con TailwindCSS
@@ -44,7 +44,7 @@ cd evaluemobility
 bundle install
 
 # 4. Genera model e controller
-rails generate model Assessment name:string age:integer email:string phone:string privacy_consent:boolean marketing_consent:boolean notes:text session_token:string current_step:integer flexion_extension:integer arms_overhead:integer spine_rotation_right:integer spine_rotation_left:integer deep_squat:integer hands_behind_back_right:integer hands_behind_back_left:integer straight_leg_raise_right:integer straight_leg_raise_left:integer completed:boolean completed_at:datetime
+rails generate model Assessment name:string age:integer email:string phone:string privacy_consent:boolean marketing_consent:boolean notes:text session_token:string current_step:integer standing_spinal_flexion_test:integer arms_overhead:integer spine_rotation_right:integer spine_rotation_left:integer deep_squat:integer hands_behind_back_right:integer hands_behind_back_left:integer straight_leg_raise_right:integer straight_leg_raise_left:integer completed:boolean completed_at:datetime
 
 rails generate controller Assessments start step review update_step create show result
 
@@ -81,7 +81,7 @@ rails server
 9. **Sollevamento gamba tesa** - sinistra
 
 ### Punteggio
-- **0-3 punti** per esercizio
+- **0-3 punti** per test
 - **Totale: 27 punti**
 - **Classificazione:**
   - 🔴 0-9: Mobilità Limitata
@@ -93,7 +93,7 @@ rails server
 ```ruby
 # Pagine principali
 GET  /                                    # Start (redirect al step 1)
-GET  /assessments/step?esercizio=1        # Step con parametri
+GET  /assessments/step?test=1        # Step con parametri
 POST /assessments/update_step             # Aggiorna step
 GET  /assessments/review                  # Riepilogo
 POST /ass[48;38;185;1216;2590tessments                         # Crea assessment final
@@ -109,7 +109,7 @@ GET  /assessments/:id/result              # Risultati completi
 - **Bottoni avanti/indietro**
 
 ### Media
-- **Video YouTube** embedded per ogni esercizio
+- **Video YouTube** embedded per ogni test
 - **Placeholder immagini** per riferimenti visivi
 - **Icons** per identificazione rapida step
 
@@ -161,7 +161,7 @@ server {
 
 ## 🔄 Possibili Miglioramenti
 
-- [ ] **Upload immagini** per ogni esercizio
+- [ ] **Upload immagini** per ogni test
 - [ ] **Sistema utenti** per storico progressi
 - [ ] **Email automation** invio risultati
 - [ ] **Export PDF** personalizzati  

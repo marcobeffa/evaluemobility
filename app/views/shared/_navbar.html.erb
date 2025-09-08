@@ -1,0 +1,64 @@
+<!-- Header -->
+<div class="bg-white shadow-sm">
+  <div class="max-w-7xl mx-auto px-4 ">
+    <div class="flex justify-between items-center h-16">
+      <!-- Logo -->
+      <div class="flex-shrink-0">
+        <div class="hidden md:block text-md font-bold text-blue-500">Valutazione mobilità articolare semplificata</div>
+        <div class="block md:hidden text-md font-bold text-blue-500">Val. articolare s.</div>
+      </div>
+      <!-- Navigation -->
+      <nav class="flex items-center space-x-2 md:space-x-8">
+        <a href="#" class="text-gray-600 hover:text-gray-900">Help</a>
+        <select class="text-gray-600 border-none bg-transparent">
+          <option>English</option>
+        </select>
+        <button id="open-menu" class="p-2 rounded hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-400">
+          <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+          </svg>
+        </button>
+      </nav>
+    </div>
+  </div>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const openBtn = document.getElementById('open-menu');
+      const closeBtn = document.getElementById('close-menu');
+      const mobileMenu = document.getElementById('mobile-menu');
+
+      openBtn.addEventListener('click', () => {
+        mobileMenu.classList.remove('hidden');
+      });
+
+      closeBtn.addEventListener('click', () => {
+        mobileMenu.classList.add('hidden');
+      });
+
+      // Chiudi il menu cliccando sullo sfondo
+      mobileMenu.querySelector('.bg-black').addEventListener('click', () => {
+        mobileMenu.classList.add('hidden');
+      });
+    });
+  </script>
+  <!-- Mobile Navigation Menu -->
+  <div class="fixed inset-0 z-50 hidden" id="mobile-menu">
+    <div class="fixed inset-0 bg-black bg-opacity-50"></div>
+    <div class="fixed top-0 right-0 w-64 h-full bg-white shadow-lg">
+      <div class="flex items-center justify-between p-4 border-b">
+        <span class="font-semibold">Menu</span>
+        <button id="close-menu">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+      <nav class="p-4 space-y-4">
+        <%= link_to "Change Language", "#", class: "block text-gray-600 hover:text-gray-900" %>
+        <%= link_to "Terms & Policies", "#", class: "block text-gray-600 hover:text-gray-900" %>
+        <%= link_to "FAQ", "#", class: "block text-gray-600 hover:text-gray-900" %>
+        <%= link_to "My Account", "#", class: "block text-gray-600 hover:text-gray-900" %>
+        <%= link_to "Support", "#", class: "block text-gray-600 hover:text-gray-900" %>
+      </nav>
+    </div>
+  </div>

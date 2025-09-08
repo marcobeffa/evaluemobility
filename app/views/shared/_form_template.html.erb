@@ -1,0 +1,151 @@
+<%# app/views/shared/_form_template.html.erb %>
+<%# Template compatibile con AssessmentsController %>
+<!-- Main Content -->
+<main class="max-w-4xl mx-auto px-4  sm:px-6 lg:px-8">
+  <!-- Progress Section -->
+  <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+    <!-- Progress Bar -->
+    <div class="flex items-center justify-between mb-2">
+      <button class="px-2 text-gray-400 hover:text-gray-600">
+        <% if @current_step > 1 %>
+          <%= link_to step_assessments_path(test: @current_step - 1), 
+                    class: "" do %>
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+            </svg>
+          <% end %>
+        <% else %>
+          <div></div>
+        <% end %>
+      </button>
+      <h1 class="text-sm  text-gray-900 "><%= @exercise[:title] %></h1>
+      <span class="text-sm text-gray-500">
+        <p class="text-sm text-gray-600">Step <%= @current_step %> of 10</p>
+      </span>
+    </div>
+    <div class="w-full bg-gray-200 rounded-full h-1 mb-2">
+      <div class="bg-gradient-to-r from-orange-400 to-orange-600 h-1 rounded-full transition-all duration-500 ease-out" 
+             style="width: <%= @assessment.progress_percentage(@current_step) %>%"></div>
+    </div>
+    <!-- Title -->
+    <div class="text-center">
+      <div class="text-2xl">
+        <h2 class="text-xl sm:text-3xl font-bold text-gray-800">
+          <%= Assessment::STEPS[@current_step][:icon] %>  <%= Assessment::STEPS[@current_step][:name] %>
+        </h2>
+      </div>
+      <p class="text-md opacity-90"><%= @exercise[:description] %></p>
+    </div>
+    <!-- Main Content -->
+    <% if @current_step == 10 %>
+      <!-- STEP 10: Personal Information -->
+      <%= render 'shared/step_10_personal_info' %>
+    <% else %>
+      <!-- EXERCISE STEPS (1-9) -->
+      <%= render 'exercise_step' %>
+    <% end %>
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <!-- Step Indicators -->
+      <div class="flex justify-between items-center">
+        <% Assessment::STEPS.each do |step_num, step_info| %>
+          <%= link_to step_assessments_path(test: step_num), 
+              class: "flex flex-col items-center space-y-2 text-xs group transition-all hover:scale-105" do %>
+            <div class="relative">
+              <div class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold transition-all
+                          <%= step_num < @current_step ? 'bg-green-500 text-white shadow-lg' : 
+                              step_num == @current_step ? 'bg-orange-500 text-white shadow-lg animate-pulse' : 
+                              'bg-gray-200 text-gray-500' %>">
+                <%= step_num <= @assessment.completed_steps ? '✓' : step_num %>
+              </div>
+              <% if step_num == @current_step %>
+                <div class="absolute -top-1 -right-1 w-3 h-3 bg-orange-400 rounded-full animate-ping"></div>
+              <% end %>
+            </div>
+            <span class="text-center font-medium max-w-16 leading-tight
+                         <%= step_num <= @current_step ? 'text-orange-600' : 'text-gray-400' %>">
+              <%= step_info[:name].split(' ').first %>
+            </span>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Enhanced radio button interactions
+    const radioButtons = document.querySelectorAll('input[type="radio"]');
+    radioButtons.forEach(radio => {
+      radio.addEventListener('change', function() {
+        // Remove active state from all labels with same name
+        const name = this.name;
+        document.querySelectorAll(`input[name="${name}"]`).forEach(r => {
+          const label = r.closest('label');
+          if (label) {
+            label.classList.remove('border-orange-500', 'bg-orange-50');
+            label.classList.add('border-gray-200');
+          }
+        });
+
+        // Add active state to selected label
+        const selectedLabel = this.closest('label');
+        if (selectedLabel) {
+          selectedLabel.classList.remove('border-gray-200');
+          selectedLabel.classList.add('border-orange-500', 'bg-orange-50');
+        }
+      });
+    });
+
+    // Form validation enhancement
+    const form = document.querySelector('form');
+    if (form) {
+      form.addEventListener('submit', function(e) {
+        const requiredRadios = form.querySelectorAll('input[type="radio"][required]');
+        if (requiredRadios.length > 0) {
+          const radioName = requiredRadios[0].name;
+          const isChecked = form.querySelector(`input[name="${radioName}"]:checked`);
+
+          if (!isChecked) {
+            e.preventDefault();
+            const firstRadio = requiredRadios[0].closest('label');
+            if (firstRadio) {
+              firstRadio.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              // Add a subtle shake animation
+              firstRadio.style.animation = 'shake 0.5s ease-in-out';
+              setTimeout(() => {
+                firstRadio.style.animation = '';
+              }, 500);
+            }
+          }
+        }
+      });
+    }
+  });
+</script>
+<style>
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #f97316;
+    border-radius: 10px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #ea580c;
+  }
+</style>
+</main>

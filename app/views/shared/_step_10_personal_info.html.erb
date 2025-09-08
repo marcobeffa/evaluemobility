@@ -1,0 +1,131 @@
+<%# app/views/shared/_step_10_personal_info.html.erb %>
+<%# Partial per lo step 10 - informazioni personali %>
+<div class="bg-white rounded-xl shadow-lg overflow-hidden">
+  <div class="bg-gradient-to-r from-green-500 to-emerald-600 text-white p-8 text-center">
+    <div class="text-6xl mb-4">🎉</div>
+    <h1 class="text-4xl font-bold mb-4">Complimenti!</h1>
+    <p class="text-xl opacity-90 mb-4">
+      Hai completato tutti gli esercizi! Ora raccogliamo le tue informazioni per il report personalizzato.
+    </p>
+    <div class="bg-white bg-opacity-20 rounded-lg p-4 inline-block">
+      <p class="font-semibold">
+        ✅ Tutti i 9 esercizi completati con successo!
+      </p>
+    </div>
+  </div>
+  <div class="p-8">
+    <%= form_with model: @assessment, url: update_step_assessments_path, local: true, class: "space-y-8" do |form| %>
+      <%= hidden_field_tag :test, @current_step %>
+      <% if @assessment.errors.any? %>
+        <div class="bg-red-50 border-l-4 border-red-400 p-6 rounded-r-lg">
+          <div class="flex items-start">
+            <div class="text-2xl mr-3">⚠️</div>
+            <div>
+              <h4 class="font-bold text-lg text-red-800 mb-2">Controlla questi campi:</h4>
+              <ul class="list-disc list-inside space-y-1 text-red-700">
+                <% @assessment.errors.full_messages.each do |message| %>
+                  <li><%= message %></li>
+                <% end %>
+              </ul>
+            </div>
+          </div>
+        </div>
+      <% end %>
+      <!-- Personal Information Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div class="space-y-2">
+          <%= form.label :name, class: "block text-sm font-bold text-gray-700" do %>
+            Nome Completo <span class="text-blue-500">*</span>
+          <% end %>
+          <%= form.text_field :name, required: true, 
+              class: "w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-orange-500 focus:ring-2 focus:ring-orange-200 transition-all text-lg",
+              placeholder: "Il tuo nome completo" %>
+        </div>
+        <div class="space-y-2">
+          <%= form.label :age, class: "block text-sm font-bold text-gray-700" do %>
+            Età <span class="text-blue-500">*</span>
+          <% end %>
+          <%= form.number_field :age, required: true, min: 10, max: 120,
+              class: "w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-orange-500 focus:ring-2 focus:ring-orange-200 transition-all text-lg",
+              placeholder: "La tua età" %>
+        </div>
+        <div class="space-y-2">
+          <%= form.label :email, class: "block text-sm font-bold text-gray-700" do %>
+            Indirizzo Email <span class="text-blue-500">*</span>
+          <% end %>
+          <%= form.email_field :email, required: true,
+              class: "w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-orange-500 focus:ring-2 focus:ring-orange-200 transition-all text-lg",
+              placeholder: "tua.email@esempio.com" %>
+          <p class="text-sm text-gray-500">📧 Necessario per ricevere i risultati</p>
+        </div>
+        <div class="space-y-2">
+          <%= form.label :phone_number, "Numero di Telefono (Opzionale)", class: "block text-sm font-bold text-gray-700" %>
+          <div class="flex space-x-2">
+            <div class="w-1/3">
+              <%= form.select :phone_country_code, 
+                  options_for_select(Assessment::COUNTRY_CODES.map { |c| [c[:country], c[:code]] }, @assessment.phone_country_code || '+39'),
+                  { prompt: "Paese" },
+                  { class: "w-full px-3 py-3 border-2 border-gray-200 rounded-lg focus:border-orange-500 focus:ring-2 focus:ring-orange-200 transition-all" } %>
+            </div>
+            <div class="w-2/3">
+              <%= form.telephone_field :phone_number, 
+                  class: "w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-orange-500 focus:ring-2 focus:ring-orange-200 transition-all",
+                  placeholder: "123 456 7890" %>
+            </div>
+          </div>
+          <p class="text-sm text-gray-500">📱 Per follow-up e chiarimenti</p>
+        </div>
+      </div>
+      <!-- International Support Info -->
+      <div class="bg-orange-50 border-l-4 border-orange-400 p-6 rounded-r-lg">
+        <div class="flex items-start">
+          <div class="text-2xl mr-3">🌍</div>
+          <div>
+            <h4 class="font-bold text-orange-900 mb-2">Supporto Internazionale</h4>
+            <p class="text-orange-800">
+              L'assessment è disponibile in tutto il mondo. Seleziona il tuo paese per il prefisso corretto.
+              <br>
+              <strong>Paesi supportati:</strong> Italia, Svizzera, Francia, Germania, Austria, Spagna e molti altri.
+            </p>
+          </div>
+        </div>
+      </div>
+      <!-- Privacy Consent Section -->
+      <div class="bg-blue-50 border-2 border-blue-200 rounded-xl p-8">
+        <h3 class="text-xl font-bold text-blue-900 mb-6 flex items-center">
+          <span class="text-2xl mr-2">📋</span> Consenso Privacy
+        </h3>
+        <div class="space-y-6">
+          <label class="flex items-start space-x-4 cursor-pointer group">
+            <%= form.check_box :privacy_consent, required: true, 
+                class: "mt-1 w-6 h-6 text-blue-500 border-2 border-blue-300 rounded focus:ring-2 focus:ring-orange-200" %>
+            <span class="text-blue-800 group-hover:text-blue-900 transition-colors leading-relaxed">
+              <strong class="text-lg">Accetto*</strong> il trattamento dei miei dati personali per la valutazione posturale e l'invio dei risultati, 
+              come da <a href="<%= privacy_path %>" class="underline font-semibold hover:text-orange-600">informativa privacy</a>.
+            </span>
+          </label>
+          <label class="flex items-start space-x-4 cursor-pointer group">
+            <%= form.check_box :marketing_consent, 
+                class: "mt-1 w-6 h-6 text-blue-500 border-2 border-blue-300 rounded focus:ring-2 focus:ring-orange-200" %>
+            <span class="text-blue-800 group-hover:text-blue-900 transition-colors leading-relaxed">
+              Accetto di ricevere comunicazioni sui servizi di postura e benessere 
+              (newsletter, promemoria re-test, offerte personalizzate).
+            </span>
+          </label>
+        </div>
+      </div>
+      <!-- Additional Notes -->
+      <div class="space-y-2">
+        <%= form.label :notes, "Note Aggiuntive", class: "block text-sm font-bold text-gray-700" %>
+        <%= form.text_area :notes, rows: 4, 
+            class: "w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-orange-500 focus:ring-2 focus:ring-orange-200 transition-all",
+            placeholder: "Eventuali problemi fisici, dolori, limitazioni o farmaci che potrebbero influenzare la valutazione..." %>
+      </div>
+      <!-- Submit Button -->
+      <div class="text-center pt-8">
+        <%= form.submit "🎯 Genera Report Finale", 
+            class: "bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-bold py-4 px-12 rounded-lg text-xl transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl" %>
+      </div>
+    <% end %>
+  </div>
+</div>

@@ -18,17 +18,14 @@
       </p>
     </div>
   </div>
-
   <!-- Main Results Grid -->
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
     <!-- Score Card -->
     <div class="bg-white rounded-xl shadow-lg p-8">
       <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">🎯 Punteggio Totale</h2>
-      
       <div class="text-center mb-6">
         <div class="text-8xl font-bold text-purple-600 mb-2"><%= @assessment.total_score %></div>
         <div class="text-2xl text-gray-600 mb-4">su 27 punti</div>
-        
         <!-- Percentage circle or bar -->
         <div class="inline-flex items-center space-x-4 bg-purple-50 px-6 py-3 rounded-full">
           <span class="text-purple-800 font-semibold">Percentuale:</span>
@@ -37,7 +34,6 @@
           </span>
         </div>
       </div>
-
       <!-- Score breakdown -->
       <div class="grid grid-cols-2 gap-4 text-center text-sm">
         <div class="bg-gray-50 rounded-lg p-4">
@@ -48,15 +44,13 @@
           <div class="text-2xl font-bold text-green-600">
             <%= sprintf("%.1f", @assessment.total_score / 9.0) %>
           </div>
-          <div class="text-gray-600">Media per esercizio</div>
+          <div class="text-gray-600">Media per test</div>
         </div>
       </div>
     </div>
-
     <!-- Mobility Level Card -->
     <div class="bg-white rounded-xl shadow-lg p-8">
       <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">📊 Livello di Mobilità</h2>
-      
       <!-- Main level display -->
       <div class="<%= @assessment.color_class %> border-2 rounded-xl p-6 mb-6 text-center">
         <div class="text-4xl font-bold mb-3">
@@ -71,7 +65,6 @@
         </div>
         <p class="text-lg font-medium"><%= @mobility_data[:description] %></p>
       </div>
-
       <!-- Scale reference -->
       <div class="space-y-3 text-sm">
         <div class="flex justify-between items-center p-3 rounded-lg <%= @assessment.total_score <= 9 ? 'bg-red-100 border-2 border-red-300' : 'bg-gray-100' %>">
@@ -83,7 +76,6 @@
             <span class="font-bold text-red-800">← Tu sei qui</span>
           <% end %>
         </div>
-        
         <div class="flex justify-between items-center p-3 rounded-lg <%= @assessment.total_score.between?(10, 18) ? 'bg-yellow-100 border-2 border-yellow-300' : 'bg-gray-100' %>">
           <span class="flex items-center space-x-2">
             <span>🟡</span>
@@ -93,7 +85,6 @@
             <span class="font-bold text-yellow-800">← Tu sei qui</span>
           <% end %>
         </div>
-        
         <div class="flex justify-between items-center p-3 rounded-lg <%= @assessment.total_score >= 19 ? 'bg-green-100 border-2 border-green-300' : 'bg-gray-100' %>">
           <span class="flex items-center space-x-2">
             <span>🟢</span>
@@ -106,11 +97,9 @@
       </div>
     </div>
   </div>
-
   <!-- Detailed Exercise Results -->
   <div class="bg-white rounded-xl shadow-lg p-8">
-    <h2 class="text-2xl font-bold text-gray-800 mb-6">📋 Dettaglio per Esercizio</h2>
-    
+    <h2 class="text-2xl font-bold text-gray-800 mb-6">📋 Dettaglio per test</h2>
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       <% Assessment::EXERCISES.each_with_index do |(step_num, exercise), index| %>
         <% score = @assessment.send(exercise[:field]) %>
@@ -132,11 +121,9 @@
               <span class="text-gray-400">/3</span>
             </div>
           </div>
-          
           <p class="text-xs text-gray-600 mb-3 leading-relaxed">
             <%= exercise[:criteria][score] %>
           </p>
-          
           <!-- Progress bar -->
           <div class="w-full bg-gray-200 rounded-full h-3 mb-2">
             <div class="h-3 rounded-full transition-all duration-500 <%= 
@@ -148,7 +135,6 @@
               end %>" 
                  style="width: <%= (score / 3.0 * 100).round %>%"></div>
           </div>
-          
           <div class="text-right">
             <span class="text-xs font-bold px-2 py-1 rounded-full <%= 
               case score
@@ -171,11 +157,9 @@
       <% end %>
     </div>
   </div>
-
   <!-- Recommendations -->
   <div class="bg-white rounded-xl shadow-lg p-8">
     <h2 class="text-2xl font-bold text-gray-800 mb-6">💡 Raccomandazioni Personalizzate</h2>
-    
     <% case @mobility_data[:color] %>
     <% when "red" %>
       <div class="bg-red-50 border-l-4 border-red-500 rounded-lg p-6 mb-6">
@@ -209,37 +193,31 @@
       </div>
     <% end %>
   </div>
-
   <!-- Actions -->
   <div class="bg-white rounded-xl shadow-lg p-8">
     <h2 class="text-2xl font-bold text-gray-800 mb-6">📤 Azioni</h2>
-    
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
       <%= link_to root_path, 
           class: "bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-6 rounded-lg text-center transition-all duration-200 flex items-center justify-center space-x-2" do %>
         <span>🔄</span>
         <span>Nuovo Test</span>
       <% end %>
-      
       <button onclick="window.print()" 
               class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-4 px-6 rounded-lg transition-all duration-200 flex items-center justify-center space-x-2">
         <span>🖨️</span>
         <span>Stampa PDF</span>
       </button>
-      
       <button onclick="shareResults()" 
               class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-4 px-6 rounded-lg transition-all duration-200 flex items-center justify-center space-x-2">
         <span>📱</span>
         <span>Condividi</span>
       </button>
-      
       <a href="https://igieneposturale.it/contatti" 
          class="bg-green-600 hover:bg-green-700 text-white font-bold py-4 px-6 rounded-lg text-center transition-all duration-200 flex items-center justify-center space-x-2">
         <span>📞</span>
         <span>Contattaci</span>
       </a>
     </div>
-    
     <!-- Share URL -->
     <div class="bg-gray-50 rounded-lg p-4">
       <label class="block text-sm font-medium text-gray-700 mb-2">🔗 Condividi i tuoi risultati:</label>
@@ -257,11 +235,10 @@
     </div>
   </div>
 </div>
-
 <script>
   function shareResults() {
     const text = `🎯 Ho completato il test di mobilità articolare!\n\nRisultato: <%= @assessment.total_score %>/27 punti (<%= sprintf("%.1f", @assessment.total_score / 27.0 * 100) %>%)\n<%= @mobility_data[:color] == 'red' ? '🔴' : @mobility_data[:color] == 'yellow' ? '🟡' : '🟢' %> Livello: <%= @mobility_data[:level] %>\n\n<%= @mobility_data[:description] %>\n\n✨ Fai anche tu il test gratuito!`;
-    
+
     if (navigator.share) {
       navigator.share({
         title: 'I miei risultati del test di mobilità articolare',
@@ -274,13 +251,13 @@
       });
     }
   }
-  
+
   function copyUrl() {
     const urlInput = document.getElementById('shareUrl');
     urlInput.select();
     urlInput.setSelectionRange(0, 99999); // For mobile devices
     document.execCommand('copy');
-    
+
     // Visual feedback
     const button = event.target;
     const originalText = button.textContent;

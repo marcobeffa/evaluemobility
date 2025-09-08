@@ -1,0 +1,44 @@
+<!-- instruction.html.erb -->
+<%= render 'shared/navbar' %>
+<section class="  flex flex-col items-center justify-center bg-gray-50 px-4">
+  <div class="max-w-2xl w-full text-center mt-8">
+    <h1 class="text-3xl sm:text-4xl font-bold text-gray-800  mb-8">
+      Istruzioni
+    </h1>
+    <%= render "shared/stepper_intro" %>
+    <div class="relative w-full" style="padding-top: 56.25%;">
+      <!-- Video -->
+      <iframe
+    id="yt-video"
+    src="https://www.youtube.com/embed/Dpz17mAM848?start=60&end=77&controls=0&modestbranding=1&rel=0&enablejsapi=1"
+    frameborder="0"
+    allow="autoplay; accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+    class="absolute top-0 left-0 w-full h-full rounded-lg shadow-lg"
+  ></iframe>
+      <!-- Overlay Inizia -->
+      <div id="start-overlay" 
+       class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-60 cursor-pointer text-white text-2xl font-bold">
+        CONTINUA ▶
+      </div>
+    </div>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const startOverlay = document.getElementById("start-overlay");
+        const iframe = document.getElementById("yt-video");
+
+        startOverlay.addEventListener("click", () => {
+          startOverlay.style.display = "none";
+
+          // Avvio il video senza ricaricare
+          iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+
+          // Dopo 11 secondi (13 - 2) faccio redirect
+          setTimeout(() => {
+            window.location.href = "<%= start_path %>";
+          }, 17700);
+        });
+      });
+    </script>
+  </div>
+  <div class="h-24"></div>
+</section>

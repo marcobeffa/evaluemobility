@@ -1,0 +1,133 @@
+<%# app/views/shared/_exercise_step.html.erb %>
+<%# Partial per gli step degli esercizi (1-9) %>
+<% if @exercise.present? %>
+  <div class="grid grid-cols-1 ">
+    <!-- Left Column: Instructions & Media (3/5 width) -->
+    <div class="lg:col-span-3 max-w-2xl mx-auto">
+      <div class=" space-y-6">
+        <!-- inizio form --->
+        <div class="lg:col-span-2">
+          <%= form_with model: @assessment, url: update_step_assessments_path, method: :post, local: true do |form| %>
+            <%= hidden_field_tag :test, @current_step %>
+            <div class="p-6">
+              <% if @assessment.errors.any? %>
+                <div class="bg-red-50 border-l-4 border-red-400 p-4 mb-6 rounded-r-lg">
+                  <div class="flex items-center">
+                    <div class="text-xl mr-2">⚠️</div>
+                    <p class="font-semibold text-red-800">Seleziona una risposta per continuare</p>
+                  </div>
+                </div>
+              <% end %>
+              <div class="space-y-4">
+                <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <% @exercise[:criteria].each do |score, criterion| %>
+                    <label class="relative flex flex-col rounded-xl overflow-hidden cursor-pointer border border-gray-200 hover:shadow-lg transition-all group" onclick="this.querySelector('input').click(); this.querySelector('input').form.submit()">
+                      <%= form.radio_button @exercise[:field], score, class: "sr-only peer", required: true %>
+                      <%= image_tag criterion[:image_url], alt: criterion[:text], class: "w-full aspect-square object-cover" %>
+                      <div class="flex items-center justify-between bg-orange-600 text-white px-4 py-3">
+                        <span class="text-lg font-bold peer-checked:text-yellow-200 group-hover:text-yellow-100">
+                          <%= criterion[:text] %>
+                        </span>
+                        <span class="text-xl">➔</span>
+                      </div>
+                    </label>
+                  <% end %>
+                </div>
+                <!-- Navigation Buttons -->
+                <!--div class="flex justify-between items-center pt-8 mt-8 border-t-2 border-gray-100">
+                    <div class="text-center">
+                      <div class="text-sm text-gray-500 mb-2">
+                        test <%= @current_step %> di 9
+                      </div>
+                      <%#= form.submit (@current_step == 9 ? "Completa Assessment →" : "Prossimo test →"), 
+                    class: "bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-bold py-3 px-8 rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg" %>
+                    </div>
+                  </div-->
+              </div>
+            <% end %>
+          </div>
+          <!-- fine form --->
+          <!-- Safety Warning -->
+          <div class="mt-4 text-center">
+            <p class="text-xs text-gray-500">
+              ⚠️ Fermati se senti dolore e seleziona il punteggio più basso
+            </p>
+          </div>
+        </div>
+        <!-- Video Section -->
+        <div>
+          <div class="relative w-full" style="padding-top: 56.25%;">
+            <!-- Video -->
+            <iframe
+    id="yt-video"
+    src="<%= @exercise[:video_url] %>"
+    frameborder="0"
+    allow="autoplay; accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+    class="absolute top-0 left-0 w-full h-full rounded-lg shadow-lg"
+  ></iframe>
+            <!-- Overlay Inizia -->
+            <div id="start-overlay" 
+       class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-60 cursor-pointer text-white text-2xl font-bold">
+              GUARDA IL TEST ▶
+            </div>
+            <!-- Overlay Continua (inizialmente nascosto) -->
+            <div id="end-overlay" 
+       class="absolute inset-0 hidden items-center justify-center bg-black bg-opacity-60 text-white text-2xl font-bold">
+              GUARDA IL TEST ▶ 
+            </div>
+          </div>
+          <script>
+            document.addEventListener("DOMContentLoaded", () => {
+              const startOverlay = document.getElementById("start-overlay");
+              const endOverlay = document.getElementById("end-overlay");
+              const iframe = document.getElementById("yt-video");
+
+              startOverlay.addEventListener("click", () => {
+                startOverlay.style.display = "none";
+
+                // Mando il comando play al player
+                iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+
+                // Dopo 11s (13-2) appare CONTINUA
+                setTimeout(() => {
+                  endOverlay.classList.remove("hidden");
+                  endOverlay.classList.add("flex");
+                }, <%= @exercise[:time_duration] * 1000 %>);
+              });
+              endOverlay.addEventListener("click", () => {
+                endOverlay.style.display = "none";
+
+                // Mando il comando play al player
+                iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+
+                // Dopo 11s (13-2) appare CONTINUA
+                setTimeout(() => {
+                  endOverlay.classList.remove("hidden");
+                  endOverlay.classList.add("flex");
+                }, <%= @exercise[:time_duration] * 1000 %>);
+              });
+            });
+          </script>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+<% else %>
+  <!-- Fallback if exercise not found -->
+  <div class="bg-white rounded-xl shadow-lg p-8 text-center">
+    <div class="text-6xl mb-4">⚠️</div>
+    <h2 class="text-3xl font-bold text-red-600 mb-4">Errore: test Non Trovato</h2>
+    <p class="text-gray-600 text-lg mb-8">
+      Non riusciamo a caricare l'test per questo step.
+    </p>
+    <%= link_to "Torna all'Inizio", step_assessments_path(test: 1), 
+        class: "bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-8 rounded-lg transition-all hover:scale-105" %>
+  </div>
+<% end %>
+<div class="mt-12 text-center">
+  <p class="text-sm text-gray-600">
+    “In caso di dolori o dubbi si consiglia di consultare il medico o il fisioterapista di fiducia prima di iniziare la valutazione.”
+  </p>
+</div>

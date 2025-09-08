@@ -8,7 +8,7 @@ one:
   privacy_consent: false
   marketing_consent: false
   notes: MyText
-  flexion_extension: 1
+  standing_spinal_flexion_test: 1
   arms_overhead: 1
   spine_rotation_right: 1
   spine_rotation_left: 1
@@ -26,7 +26,7 @@ two:
   privacy_consent: false
   marketing_consent: false
   notes: MyText
-  flexion_extension: 1
+  standing_spinal_flexion_test: 1
   arms_overhead: 1
   spine_rotation_right: 1
   spine_rotation_left: 1

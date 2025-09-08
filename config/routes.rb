@@ -1,4 +1,13 @@
 Rails.application.routes.draw do
+  get "pages/intro"
+  get "instruction", to: "pages#instruction"
+
+  get "pages/help"
+  get "pages/about"
+  get "pages/professionisti"
+  get "pages/privacy"
+  get "pages/terms"
+  get "pages/contact"
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
@@ -11,12 +20,12 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   # root "posts#index"
-  root "assessments#start"
+
 
   resources :assessments, only: [ :create, :show ] do
     collection do
       get :start
-      get :step        # Single step action with ?esercizio=1,2,3...
+      get :step        # Single step action with ?test=1,2,3...
       get :review
       post :update_step
     end
@@ -24,4 +33,10 @@ Rails.application.routes.draw do
       get :result
     end
   end
+  root "pages#intro"
+  get "instruction", to: "pages#instruction"
+  get "start", to: "assessments#start"
+  get "terms", to: "pages#terms"
+  get "privacy", to: "pages#privacy"
+  get "cookies", to: "pages#cookies"
 end

@@ -1,0 +1,54 @@
+<% if action_name == "intro" %>
+  <% current_step = "intro" %>
+  <% next_path = instruction_path %>
+  <% next_label = "Continua" %>
+<% elsif action_name == "instruction" %>
+  <% current_step = "instruction" %>
+  <% next_path = start_path %>
+  <% next_label = "Inizia Test" %>
+<% elsif action_name == "start" || controller_name == "assessments" %>
+  <% current_step = "start" %>
+  <% next_path = nil %>
+  <% next_label = nil %>
+<% end %>
+<div class="max-w-4xl mx-auto px-4 pb-8 mt-4">
+  <!-- Progress Bar -->
+  <div class="mb-8">
+    <div class="flex items-center justify-between mb-4">
+      <%= link_to root_path do %>
+        <div class="flex items-center">
+          <div class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold bg-blue-500 text-white">
+            ✓
+          </div>
+          <span class="hidden md:flex ml-2 text-sm font-medium text-blue-600">Intro</span>
+        </div>
+      <% end %>
+      <%= link_to instruction_path do %>
+        <div class="flex items-center">
+          <div class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold
+                    <%= current_step == 'instruction' ? 'bg-blue-500 text-white' : (current_step == 'intro' ? 'bg-gray-300 text-gray-500' : 'bg-blue-500 text-white') %>">
+            <%= current_step == 'intro' ? '2' : '✓' %>
+          </div>
+          <span class="hidden md:flex  ml-2 text-sm font-medium <%= ['instruction', 'start'].include?(current_step) ? 'text-blue-600' : 'text-gray-500' %>">Indicazioni</span>
+        </div>
+      <% end %>
+      <%= link_to start_path do %>
+        <div class="flex items-center">
+          <div class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold
+                    <%= current_step == 'start' ? 'bg-blue-500 text-white' : 'bg-gray-300 text-gray-500' %>">
+            <%= current_step == 'start' ? '3' : '3' %>
+          </div>
+          <span class="hidden md:flex  ml-2 text-sm font-medium <%= current_step == 'start' ? 'text-blue-600' : 'text-gray-500' %>">Inizia la valutazione!</span>
+        </div>
+      <% end %>
+    </div>
+    <!-- Progress Line -->
+    <div class="relative">
+      <div class="absolute top-1/2 left-0 right-0 h-1 bg-gray-200 -translate-y-1/2"></div>
+      <div class="absolute top-1/2 left-0 h-1 bg-blue-500 -translate-y-1/2 transition-all duration-500
+                  <%= current_step == 'intro' ? 'w-0' : (current_step == 'instruction' ? 'w-1/2' : 'w-full') %>">
+      </div>
+    </div>
+  </div>
+  <!-- Continue Button -->
+</div>

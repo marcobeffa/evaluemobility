@@ -1,0 +1,285 @@
+<div class="max-w-5xl mx-auto">
+  <!-- Progress Bar -->
+  <div class="mb-8">
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-lg font-semibold text-gray-800">
+        <%= Assessment::STEPS[@current_step][:icon] %> <%= Assessment::STEPS[@current_step][:name] %>
+      </h2>
+      <span class="text-sm font-medium text-gray-600">
+        Passo <%= @current_step %> di 10
+      </span>
+    </div>
+    <!-- Progress bar -->
+    <div class="w-full bg-gray-200 rounded-full h-4 mb-4">
+      <div class="bg-gradient-to-r from-blue-500 to-purple-600 h-4 rounded-full transition-all duration-500" 
+           style="width: <%= @assessment.progress_percentage(@current_step) %>%"></div>
+    </div>
+    <!-- Step indicators -->
+    <div class="flex justify-between">
+      <% Assessment::STEPS.each do |step_num, step_info| %>
+        <%= link_to step_assessments_path(test: step_num), 
+            class: "flex flex-col items-center space-y-1 text-xs transition-colors #{'text-blue-600 font-semibold' if step_num <= @current_step}" do %>
+          <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold
+                      <%= step_num < @current_step ? 'bg-green-500 text-white' : 
+                          step_num == @current_step ? 'bg-blue-500 text-white' : 
+                          'bg-gray-300 text-gray-600' %>">
+            <%= step_num <= @assessment.completed_steps ? '✓' : step_num %>
+          </div>
+          <span class="<%= step_num <= @current_step ? 'text-blue-600' : 'text-gray-400' %>">
+            <%= step_info[:name] %>
+          </span>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+  <!-- Main Content -->
+  <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+    <% if @current_step == 10 %>
+      <!-- STEP 10: Personal Information (MOVED TO END) -->
+      <div class="p-8">
+        <div class="text-center mb-8">
+          <div class="text-6xl mb-4">🎉</div>
+          <h2 class="text-3xl font-bold text-gray-800 mb-2">Complimenti!</h2>
+          <p class="text-gray-600 text-lg mb-4">
+            Hai completato tutti gli esercizi! Ora raccogliamo i tuoi dati per generare il report personalizzato.
+          </p>
+          <div class="bg-green-100 border border-green-300 rounded-lg p-4">
+            <p class="text-green-800 font-medium">
+              ✅ Tutti i 9 esercizi completati con successo!
+            </p>
+          </div>
+        </div>
+        <%= form_with model: @assessment, url: update_step_assessments_path, local: true, class: "space-y-6" do |form| %>
+          <%= hidden_field_tag :test, @current_step %>
+          <% if @assessment.errors.any? %>
+            <div class="bg-red-100 border border-red-400 text-red-700 px-6 py-4 rounded-lg">
+              <h4 class="font-bold text-lg mb-2">⚠️ Controlla questi campi:</h4>
+              <ul class="list-disc list-inside space-y-1">
+                <% @assessment.errors.full_messages.each do |message| %>
+                  <li><%= message %></li>
+                <% end %>
+              </ul>
+            </div>
+          <% end %>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <%= form.label :name, "Nome e Cognome *", class: "block text-sm font-semibold text-gray-700 mb-3" %>
+              <%= form.text_field :name, required: true, 
+                  class: "w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all",
+                  placeholder: "Mario Rossi" %>
+            </div>
+            <div>
+              <%= form.label :age, "Età *", class: "block text-sm font-semibold text-gray-700 mb-3" %>
+              <%= form.number_field :age, required: true, min: 10, max: 120,
+                  class: "w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all",
+                  placeholder: "35" %>
+            </div>
+            <div>
+              <%= form.label :email, "Email *", class: "block text-sm font-semibold text-gray-700 mb-3" %>
+              <%= form.email_field :email, required: true,
+                  class: "w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all",
+                  placeholder: "mario.rossi@email.com" %>
+              <p class="text-xs text-gray-500 mt-2">📧 Necessaria per ricevere i risultati</p>
+            </div>
+            <div>
+              <%= form.label :phone_number, "Telefono (opzionale)", class: "block text-sm font-semibold text-gray-700 mb-3" %>
+              <div class="flex space-x-2">
+                <!-- Country Code Dropdown -->
+                <div class="w-1/3">
+                  <%= form.select :phone_country_code, 
+                      options_for_select(Assessment::COUNTRY_CODES.map { |c| [c[:country], c[:code]] }, @assessment.phone_country_code || '+39'),
+                      { prompt: "Paese" },
+                      { class: "w-full px-3 py-3 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all text-sm" } %>
+                </div>
+                <!-- Phone Number Input -->
+                <div class="w-2/3">
+                  <%= form.telephone_field :phone_number, 
+                      class: "w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all",
+                      placeholder: "123 456 7890" %>
+                </div>
+              </div>
+              <p class="text-xs text-gray-500 mt-2">📱 Solo per eventuali follow-up o chiarimenti</p>
+            </div>
+          </div>
+          <!-- Country Selection Info -->
+          <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+            <h4 class="font-semibold text-blue-900 mb-2">🌍 Supporto Internazionale</h4>
+            <p class="text-sm text-blue-800">
+              Il test è disponibile per utenti di tutto il mondo. Seleziona il tuo paese per il prefisso telefonico corretto.
+              <br>
+              <strong>Paesi supportati:</strong> Italia, Svizzera, Francia, Germania, Austria, Spagna e molti altri.
+            </p>
+          </div>
+          <!-- Privacy Section -->
+          <div class="bg-blue-50 border-2 border-blue-200 rounded-lg p-6">
+            <h3 class="text-lg font-bold text-blue-900 mb-4">📋 Consenso Privacy</h3>
+            <div class="space-y-4">
+              <label class="flex items-start space-x-3 cursor-pointer group">
+                <%= form.check_box :privacy_consent, required: true, 
+                    class: "mt-1 w-5 h-5 text-blue-600 border-2 border-blue-300 rounded focus:ring-2 focus:ring-blue-200" %>
+                <span class="text-sm text-blue-800 group-hover:text-blue-900 transition-colors">
+                  <strong>Accetto*</strong> il trattamento dei miei dati personali per la valutazione posturale e l'invio dei risultati, 
+                  come da <a href="#" class="underline font-semibold">informativa privacy</a>.
+                </span>
+              </label>
+              <label class="flex items-start space-x-3 cursor-pointer group">
+                <%= form.check_box :marketing_consent, 
+                    class: "mt-1 w-5 h-5 text-blue-600 border-2 border-blue-300 rounded focus:ring-2 focus:ring-blue-200" %>
+                <span class="text-sm text-blue-800 group-hover:text-blue-900 transition-colors">
+                  Accetto di ricevere comunicazioni su servizi di postura e benessere 
+                  (newsletter, promemoria re-test, offerte personalizzate).
+                </span>
+              </label>
+            </div>
+          </div>
+          <!-- Notes -->
+          <div>
+            <%= form.label :notes, "Note aggiuntive", class: "block text-sm font-semibold text-gray-700 mb-3" %>
+            <%= form.text_area :notes, rows: 4, 
+                class: "w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all",
+                placeholder: "Eventuali problemi fisici, dolori, limitazioni o farmaci che potrebbero influenzare il test..." %>
+          </div>
+          <!-- Submit Button -->
+          <div class="text-center pt-6">
+            <%= form.submit "🎯 Genera Report Finale", 
+                class: "bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold py-4 px-8 rounded-lg text-lg transition-all duration-200 transform hover:scale-105" %>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <!-- EXERCISE STEPS (1-9) -->
+      <% if @exercise.present? %>
+        <div class="grid grid-cols-1 lg:grid-cols-2">
+          <!-- Left Column: Instructions & Video -->
+          <div class="p-8 bg-gray-50">
+            <div class="mb-6">
+              <h2 class="text-2xl font-bold text-gray-800 mb-3"><%= @exercise[:title] %></h2>
+              <p class="text-gray-600 text-lg leading-relaxed"><%= @exercise[:description] %></p>
+            </div>
+            <!-- Safety Warning -->
+            <div class="bg-yellow-100 border-l-4 border-yellow-500 p-4 mb-6">
+              <div class="flex items-start">
+                <div class="text-2xl mr-3">⚠️</div>
+                <div>
+                  <p class="text-yellow-800 font-semibold">Importante:</p>
+                  <p class="text-yellow-700 text-sm">
+                    Esegui il movimento lentamente e senza forzare. Se avverti dolore, interrompi e seleziona il punteggio più basso.
+                  </p>
+                </div>
+              </div>
+            </div>
+            <!-- Video -->
+            <div class="mb-6">
+              <h3 class="text-lg font-semibold mb-3">📹 Video Dimostrativo</h3>
+              <div class="aspect-video bg-gray-900 rounded-lg overflow-hidden shadow-lg">
+                <iframe 
+                src="<%= @exercise[:video_url] %>" 
+                class="w-full h-full"
+                frameborder="0" 
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                allowfullscreen>
+                </iframe>
+              </div>
+            </div>
+            <!-- Visual References -->
+            <div>
+              <h3 class="text-lg font-semibold mb-3">📸 Riferimenti Visivi</h3>
+              <div class="grid grid-cols-2 gap-3">
+                <% @exercise[:criteria].each do |score, description| %>
+                  <div class="text-center">
+                    <div class="w-full h-20 bg-gray-200 rounded-lg flex items-center justify-center mb-2 border-2 border-gray-300">
+                      <div class="text-center text-gray-600">
+                        <div class="text-2xl font-bold text-blue-600 mb-1"><%= score %></div>
+                        <div class="text-xs">Foto esempio</div>
+                      </div>
+                    </div>
+                    <span class="text-xs text-gray-600 font-medium">Livello <%= score %></span>
+                  </div>
+                <% end %>
+              </div>
+            </div>
+          </div>
+          <!-- Right Column: Assessment Form -->
+          <div class="p-8">
+            <%= form_with model: @assessment, url: update_step_assessments_path, local: true do |form| %>
+              <%= hidden_field_tag :test, @current_step %>
+              <% if @assessment.errors.any? %>
+                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-6">
+                  <p class="font-bold">⚠️ Seleziona un punteggio per continuare</p>
+                </div>
+              <% end %>
+              <div class="mb-8">
+                <h3 class="text-xl font-bold text-gray-800 mb-4">🎯 Valuta la Tua Performance</h3>
+                <p class="text-gray-600 mb-6">
+                  Esegui l'test e scegli il punteggio che meglio descrive il tuo risultato:
+                </p>
+                <div class="space-y-4">
+                  <% @exercise[:criteria].each do |score, description| %>
+                    <label class="flex items-start space-x-4 p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-blue-300 hover:bg-blue-50 transition-all group">
+                      <%= form.radio_button @exercise[:field], score, 
+                        class: "mt-1 w-5 h-5 text-blue-600 border-2 border-gray-300", 
+                        required: true %>
+                      <div class="flex-1">
+                        <div class="flex items-center space-x-3 mb-2">
+                          <span class="text-3xl font-bold text-blue-600"><%= score %></span>
+                          <span class="text-sm font-semibold px-3 py-1 rounded-full <%= 
+                          case score
+                          when 0 then 'bg-red-100 text-red-800'
+                          when 1 then 'bg-yellow-100 text-yellow-800'
+                          when 2 then 'bg-blue-100 text-blue-800'
+                          when 3 then 'bg-green-100 text-green-800'
+                          end %>">
+                            <%= 
+                            case score
+                            when 0 then "Limitato"
+                            when 1 then "Sufficiente"
+                            when 2 then "Buono"
+                            when 3 then "Ottimo"
+                            end 
+                          %>
+                          </span>
+                        </div>
+                        <p class="text-gray-700 font-medium group-hover:text-gray-900 transition-colors">
+                          <%= description %>
+                        </p>
+                      </div>
+                    </label>
+                  <% end %>
+                </div>
+              </div>
+              <!-- Navigation Buttons -->
+              <div class="flex justify-between items-center pt-6 border-t-2 border-gray-100">
+                <% if @current_step > 1 %>
+                  <%= link_to step_assessments_path(test: @current_step - 1), 
+                    class: "flex items-center space-x-2 bg-gray-500 hover:bg-gray-600 text-white font-bold py-3 px-6 rounded-lg transition-all duration-200" do %>
+                    <span>←</span>
+                    <span>Indietro</span>
+                  <% end %>
+                <% else %>
+                  <div></div>
+                <% end %>
+                <div class="text-center">
+                  <div class="text-sm text-gray-500 mb-2">
+                    test <%= @current_step %> di 9
+                  </div>
+                  <%= form.submit (@current_step == 9 ? "Vai ai Dati →" : "Continua →"), 
+                    class: "bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold py-3 px-8 rounded-lg transition-all duration-200 transform hover:scale-105" %>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        <% else %>
+          <!-- Fallback if exercise not found -->
+          <div class="p-8 text-center">
+            <div class="text-6xl mb-4">⚠️</div>
+            <h2 class="text-2xl font-bold text-red-600 mb-4">Errore: test non trovato</h2>
+            <p class="text-gray-600 mb-6">
+              Non riusciamo a caricare l'test per questo step.
+            </p>
+            <%= link_to "Torna all'inizio", step_assessments_path(test: 1), 
+              class: "bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg" %>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+  </div>

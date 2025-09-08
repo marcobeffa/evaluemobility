@@ -8,7 +8,7 @@ class Assessment < ApplicationRecord
   validates :privacy_consent, acceptance: true, if: :step_10_or_later?
 
   # Exercise validations based on current step
-  validates :flexion_extension, inclusion: { in: 0..3 }, if: :step_1_or_later?
+  validates :standing_spinal_flexion_test, inclusion: { in: 0..3 }, if: :step_1_or_later?
   validates :arms_overhead, inclusion: { in: 0..3 }, if: :step_2_or_later?
   validates :spine_rotation_right, inclusion: { in: 0..3 }, if: :step_3_or_later?
   validates :spine_rotation_left, inclusion: { in: 0..3 }, if: :step_4_or_later?
@@ -44,128 +44,131 @@ class Assessment < ApplicationRecord
   ].freeze
 
   STEPS = {
-    1 => { name: "Flesso-estensione", icon: "🤸‍♂️" },
+    1 => { name: "Standing Spinal Flexion Test", icon: "🩻" },
     2 => { name: "Braccia Sopra", icon: "🙆‍♂️" },
     3 => { name: "Rotazione Dx", icon: "↗️" },
     4 => { name: "Rotazione Sx", icon: "↖️" },
     5 => { name: "Squat", icon: "🏋️‍♂️" },
-    6 => { name: "Mani Dietro Dx", icon: "🤲" },
+    6 => { name: "Mani Diet🩻ro Dx", icon: "🤲" },
     7 => { name: "Mani Dietro Sx", icon: "🤲" },
     8 => { name: "Gamba Dx", icon: "🦵" },
     9 => { name: "Gamba Sx", icon: "🦵" },
     10 => { name: "Dati Personali", icon: "👤" }
   }.freeze
 
-  EXERCISES = {
-    1 => {
-      title: "Flesso-estensione in avanti (da in piedi)",
-      description: "Piedi uniti, gambe tese, fletti il busto in avanti cercando di toccare il pavimento con le mani",
-      field: :flexion_extension,
-      criteria: {
-        0 => "Mani sopra le ginocchia",
-        1 => "Mani alle tibie",
-        2 => "Mani alle caviglie",
-        3 => "Mani a terra"
-      },
-      video_url: "https://www.youtube.com/embed/Dpz17mAM848?start=41"
+EXERCISES = {
+  1 => {
+    title: "Flesso-estensione in avanti (da in piedi)",
+    description: "Piedi uniti, gambe tese, fletti il busto in avanti cercando di toccare il pavimento con le mani",
+    field: :standing_spinal_flexion_test,
+    criteria: {
+      0 => { text: "Mani sopra le ginocchia", image_url: "https://picsum.photos/200?random=1" },
+      1 => { text: "Mani alle tibie",         image_url: "https://picsum.photos/200?random=2" },
+      2 => { text: "Mani alle caviglie",      image_url: "https://picsum.photos/200?random=3" },
+      3 => { text: "Mani a terra",            image_url: "https://picsum.photos/200?random=4" }
     },
-    2 => {
-      title: "Braccia sopra la testa (in piedi)",
-      description: "In piedi, alza entrambe le braccia sopra la testa mantenendo la schiena dritta",
-      field: :arms_overhead,
-      criteria: {
-        0 => "Non oltre le spalle",
-        1 => "Con compensi del tronco",
-        2 => "Vicino alle orecchie",
-        3 => "Allineate senza compensi"
-      },
-      video_url: "https://www.youtube.com/embed/example2"
+    video_url: "https://www.youtube.com/embed/Dpz17mAM848?start=94&end=115&controls=0&modestbranding=1&rel=0&enablejsapi=1",
+    time_duration: 21
+  },
+  2 => {
+    title: "Braccia sopra la testa (in piedi)",
+    description: "In piedi, alza entrambe le braccia sopra la testa mantenendo la schiena dritta",
+    field: :arms_overhead,
+    criteria: {
+      0 => { text: "Non oltre le spalle",       image_url: "/images/exercises/arms_overhead/0.png" },
+      1 => { text: "Con compensi del tronco",   image_url: "/images/exercises/arms_overhead/1.png" },
+      2 => { text: "Vicino alle orecchie",      image_url: "/images/exercises/arms_overhead/2.png" },
+      3 => { text: "Allineate senza compensi",  image_url: "/images/exercises/arms_overhead/3.png" }
     },
-    3 => {
-      title: "Rotazione globale del rachide - Destra",
-      description: "In piedi, ruota il corpo verso destra mantenendo i piedi fermi",
-      field: :spine_rotation_right,
-      criteria: {
-        0 => "Rotazione limitata",
-        1 => "Ruoto 90°",
-        2 => "Quasi dietro 135°",
-        3 => "Ruoto completamente dietro 180°"
-      },
-      video_url: "https://www.youtube.com/embed/example3"
+    video_url: "https://www.youtube.com/embed/example2"
+  },
+  3 => {
+    title: "Rotazione globale del rachide - Destra",
+    description: "In piedi, ruota il corpo verso destra mantenendo i piedi fermi",
+    field: :spine_rotation_right,
+    criteria: {
+      0 => { text: "Rotazione limitata",            image_url: "https://picsum.photos/200?random=5" },
+      1 => { text: "Ruoto 90°",                      image_url: "https://picsum.photos/200?random=6" },
+      2 => { text: "Quasi dietro 135°",             image_url: "https://picsum.photos/200?random=7" },
+      3 => { text: "Ruoto completamente dietro 180°", image_url: "https://picsum.photos/200?random=8" }
     },
-    4 => {
-      title: "Rotazione globale del rachide - Sinistra",
-      description: "In piedi, ruota il corpo verso sinistra mantenendo i piedi fermi",
-      field: :spine_rotation_left,
-      criteria: {
-        0 => "Rotazione limitata",
-        1 => "Ruoto 90°",
-        2 => "Quasi dietro 135°",
-        3 => "Ruoto completamente dietro 180°"
-      },
-      video_url: "https://www.youtube.com/embed/example4"
+    video_url: "https://www.youtube.com/embed/example3"
+  },
+  4 => {
+    title: "Rotazione globale del rachide - Sinistra",
+    description: "In piedi, ruota il corpo verso sinistra mantenendo i piedi fermi",
+    field: :spine_rotation_left,
+    criteria: {
+      0 => { text: "Rotazione limitata",            image_url: "https://picsum.photos/200?random=9" },
+      1 => { text: "Ruoto 90°",                      image_url: "https://picsum.photos/200?random=10" },
+      2 => { text: "Quasi dietro 135°",             image_url: "https://picsum.photos/200?random=11" },
+      3 => { text: "Ruoto completamente dietro 180°", image_url: "https://picsum.photos/200?random=12" }
     },
-    5 => {
-      title: "Squat profondo (a corpo libero)",
-      description: "Scendi in squat il più possibile mantenendo l'equilibrio senza appoggi",
-      field: :deep_squat,
-      criteria: {
-        0 => "Non scende",
-        1 => "Instabile",
-        2 => "Quasi a fondo",
-        3 => "Fondo stabile"
-      },
-      video_url: "https://www.youtube.com/embed/example5"
+    video_url: "https://www.youtube.com/embed/example4"
+  },
+  5 => {
+    title: "Squat profondo (a corpo libero)",
+    description: "Scendi in squat il più possibile mantenendo l'equilibrio senza appoggi",
+    field: :deep_squat,
+    criteria: {
+      0 => { text: "Non scende",       image_url: "https://picsum.photos/200?random=13" },
+      1 => { text: "Instabile",         image_url: "https://picsum.photos/200?random=14" },
+      2 => { text: "Quasi a fondo",     image_url: "https://picsum.photos/200?random=15" },
+      3 => { text: "Fondo stabile",     image_url: "https://picsum.photos/200?random=16" }
     },
-    6 => {
-      title: "Mani dietro la schiena (destra sopra)",
-      description: "Porta la mano destra dall'alto e la sinistra dal basso dietro la schiena",
-      field: :hands_behind_back_right,
-      criteria: {
-        0 => "Distanza >20 cm",
-        1 => "Distanza 10-20 cm",
-        2 => "Distanza 5-10 cm",
-        3 => "Le mani si toccano"
-      },
-      video_url: "https://www.youtube.com/embed/example6"
+    video_url: "https://www.youtube.com/embed/example5"
+  },
+  6 => {
+    title: "Mani dietro la schiena (destra sopra)",
+    description: "Porta la mano destra dall'alto e la sinistra dal basso dietro la schiena",
+    field: :hands_behind_back_right,
+    criteria: {
+      0 => { text: "Distanza >20 cm",  image_url: "https://picsum.photos/200?random=17" },
+      1 => { text: "Distanza 10-20 cm", image_url: "https://picsum.photos/200?random=18" },
+      2 => { text: "Distanza 5-10 cm",  image_url: "https://picsum.photos/200?random=19" },
+      3 => { text: "Le mani si toccano", image_url: "https://picsum.photos/200?random=20" }
     },
-    7 => {
-      title: "Mani dietro la schiena (sinistra sopra)",
-      description: "Porta la mano sinistra dall'alto e la destra dal basso dietro la schiena",
-      field: :hands_behind_back_left,
-      criteria: {
-        0 => "Distanza >20 cm",
-        1 => "Distanza 10-20 cm",
-        2 => "Distanza 5-10 cm",
-        3 => "Le mani si toccano"
-      },
-      video_url: "https://www.youtube.com/embed/example7"
+    video_url: "https://www.youtube.com/embed/example6"
+  },
+  7 => {
+    title: "Mani dietro la schiena (sinistra sopra)",
+    description: "Porta la mano sinistra dall'alto e la destra dal basso dietro la schiena",
+    field: :hands_behind_back_left,
+    criteria: {
+      0 => { text: "Distanza >20 cm",  image_url: "https://picsum.photos/200?random=21" },
+      1 => { text: "Distanza 10-20 cm", image_url: "https://picsum.photos/200?random=22" },
+      2 => { text: "Distanza 5-10 cm",  image_url: "https://picsum.photos/200?random=23" },
+      3 => { text: "Le mani si toccano", image_url: "https://picsum.photos/200?random=24" }
     },
-    8 => {
-      title: "Sollevamento gamba tesa - Destra",
-      description: "Sdraiato supino, solleva la gamba destra tesa il più possibile",
-      field: :straight_leg_raise_right,
-      criteria: {
-        0 => "Meno di 45°",
-        1 => "45-75°",
-        2 => "75-89°",
-        3 => "90° o più senza dolore"
-      },
-      video_url: "https://www.youtube.com/embed/example8"
+    video_url: "https://www.youtube.com/embed/example7"
+  },
+  8 => {
+    title: "Sollevamento gamba tesa - Destra",
+    description: "Sdraiato supino, solleva la gamba destra tesa il più possibile",
+    field: :straight_leg_raise_right,
+    criteria: {
+      0 => { text: "Meno di 45°", image_url: "https://picsum.photos/200?random=25" },
+      1 => { text: "45-75°",     image_url: "https://picsum.photos/200?random=26" },
+      2 => { text: "75-89°",     image_url: "https://picsum.photos/200?random=27" },
+      3 => { text: "90° o più senza dolore", image_url: "https://picsum.photos/200?random=28" }
     },
-    9 => {
-      title: "Sollevamento gamba tesa - Sinistra",
-      description: "Sdraiato supino, solleva la gamba sinistra tesa il più possibile",
-      field: :straight_leg_raise_left,
-      criteria: {
-        0 => "Meno di 45°",
-        1 => "45-75°",
-        2 => "75-89°",
-        3 => "90° o più senza dolore"
-      },
-      video_url: "https://www.youtube.com/embed/example9"
-    }
-  }.freeze
+    video_url: "https://www.youtube.com/embed/example8"
+  },
+  9 => {
+    title: "Sollevamento gamba tesa - Sinistra",
+    description: "Sdraiato supino, solleva la gamba sinistra tesa il più possibile",
+    field: :straight_leg_raise_left,
+    criteria: {
+      0 => { text: "Meno di 45°", image_url: "https://picsum.photos/200?random=29" },
+      1 => { text: "45-75°",     image_url: "https://picsum.photos/200?random=30" },
+      2 => { text: "75-89°",     image_url: "https://picsum.photos/200?random=31" },
+      3 => { text: "90° o più senza dolore", image_url: "https://picsum.photos/200?random=32" }
+    },
+    video_url: "https://www.youtube.com/embed/example9"
+  }
+}.freeze
+
+
 
   def full_phone_number
     return nil if phone_number.blank?
@@ -179,7 +182,7 @@ class Assessment < ApplicationRecord
 
   def total_score
     [
-      flexion_extension, arms_overhead, spine_rotation_right, spine_rotation_left,
+      standing_spinal_flexion_test, arms_overhead, spine_rotation_right, spine_rotation_left,
       deep_squat, hands_behind_back_right, hands_behind_back_left,
       straight_leg_raise_right, straight_leg_raise_left
     ].compact.sum
@@ -213,7 +216,7 @@ class Assessment < ApplicationRecord
 
   def completed_steps
     steps = 0
-    steps += 1 if flexion_extension.present?
+    steps += 1 if standing_spinal_flexion_test.present?
     steps += 1 if arms_overhead.present?
     steps += 1 if spine_rotation_right.present?
     steps += 1 if spine_rotation_left.present?

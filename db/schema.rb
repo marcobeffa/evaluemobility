@@ -25,7 +25,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_20_100312) do
     t.text "notes"
     t.string "session_token", null: false
     t.integer "current_step", default: 1
-    t.integer "flexion_extension"
+    t.integer "standing_spinal_flexion_test"
     t.integer "arms_overhead"
     t.integer "spine_rotation_right"
     t.integer "spine_rotation_left"

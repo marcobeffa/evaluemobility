@@ -1,0 +1,148 @@
+<%# app/views/shared/_exercise_step.html.erb %>
+<%# Partial per gli step degli esercizi (1-9) %>
+<!-- Main Content -->
+criteria[score][:text] → ti dà la descrizione (come ora).
+criteria[score][:image_url]
+<main class="max-w-4xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
+  <!-- Progress Bar -->
+  <div class="mb-8">
+    <div class="flex items-center justify-between mb-2">
+      <button class="p-2 text-gray-400 hover:text-gray-600">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+        </svg>
+      </button>
+      <span class="text-sm text-gray-500">2/45</span>
+    </div>
+    <div class="w-full bg-gray-200 rounded-full h-2">
+      <div class="bg-primary-600 h-2 rounded-full transition-all duration-300" style="width: 4.4%"></div>
+    </div>
+  </div>
+  <!-- Quiz Form -->
+  <form class="space-y-8">
+    <!-- Title -->
+    <div class="text-center">
+      <h1 class="text-3xl font-bold text-gray-900 sm:text-4xl">Choose your goal</h1>
+    </div>
+    <!-- Continue Button -->
+    <div class="flex justify-center pt-8">
+      <button type="submit" 
+                        class="bg-primary-600 hover:bg-primary-700 text-white font-semibold py-3 px-8 rounded-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                        disabled>
+        Continue
+      </button>
+    </div>
+  </form>
+  <!-- Disclaimer -->
+  <div class="mt-12 text-center">
+    <p class="text-sm text-gray-600">
+      We recommend that you consult with your physician before beginning any exercise program
+    </p>
+  </div>
+</main>
+<% if @exercise.present? %>
+  <div class="grid grid-cols-1 gap-8">
+    <!-- Left Column: Instructions & Media (3/5 width) -->
+    <div class="lg:col-span-3">
+      <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+        <div class="bg-gradient-to-r from-orange-500 to-orange-600 text-white p-6">
+          <h1 class="text-3xl font-bold mb-2"><%= @exercise[:title] %></h1>
+          <p class="text-xl opacity-90"><%= @exercise[:description] %></p>
+        </div>
+        <div class="p-6 space-y-6">
+          <!-- inizio form --->
+          <div class="lg:col-span-2">
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden sticky top-8">
+              <%= form_with model: @assessment, url: update_step_assessments_path, method: :post, local: true do |form| %>
+                <%= hidden_field_tag :test, @current_step %>
+                <div class="p-6">
+                  <% if @assessment.errors.any? %>
+                    <div class="bg-red-50 border-l-4 border-red-400 p-4 mb-6 rounded-r-lg">
+                      <div class="flex items-center">
+                        <div class="text-xl mr-2">⚠️</div>
+                        <p class="font-semibold text-red-800">Seleziona una risposta per continuare</p>
+                      </div>
+                    </div>
+                  <% end %>
+                  <div class="space-y-4">
+                    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                      <% @exercise[:criteria].each do |score, criterion| %>
+                        <label class="relative flex flex-col rounded-xl overflow-hidden cursor-pointer border border-gray-200 hover:shadow-lg transition-all group">
+                          <%= form.radio_button @exercise[:field], score,
+                      class: "sr-only peer",
+                      required: true %>
+                          <!-- Immagine sopra -->
+                          <%= image_tag criterion[:image_url],
+      alt: criterion[:text],
+      class: "w-full aspect-square object-cover" %>
+                          <!-- Barra arancione con testo -->
+                          <div class="flex items-center justify-between bg-orange-600 text-white px-4 py-3">
+                            <span class="text-lg font-bold peer-checked:text-yellow-200 group-hover:text-yellow-100">
+                              <%= criterion[:text] %>
+                            </span>
+                            <span class="text-xl">➔</span>
+                          </div>
+                        </label>
+                      <% end %>-2
+                    </div>
+                    <!-- Navigation Buttons -->
+                    <div class="flex justify-between items-center pt-8 mt-8 border-t-2 border-gray-100">
+                      <% if @current_step > 1 %>
+                        <%= link_to step_assessments_path(test: @current_step - 1), 
+                    class: "flex items-center space-x-2 bg-gray-500 hover:bg-gray-600 text-white font-bold py-3 px-6 rounded-lg transition-all duration-200 hover:scale-105" do %>
+                          <span>←</span>
+                          <span>Indietro</span>
+                        <% end %>
+                      <% else %>
+                        <div></div>
+                      <% end %>
+                      <div class="text-center">
+                        <div class="text-sm text-gray-500 mb-2">
+                          test <%= @current_step %> di 9
+                        </div>
+                        <%= form.submit (@current_step == 9 ? "Completa Assessment →" : "Prossimo test →"), 
+                    class: "bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-bold py-3 px-8 rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg" %>
+                      </div>
+                    </div>
+                  </div>
+                <% end %>
+              </div>
+            </div>
+          </div>
+          <!-- fine form --->
+          <!-- Safety Warning -->
+          <div class="mt-4 text-center">
+            <p class="text-xs text-gray-500">
+              ⚠️ Fermati se senti dolore e seleziona il punteggio più basso
+            </p>
+          </div>
+        </div>
+        <!-- Video Section -->
+        <div>
+          <div class="aspect-video bg-gray-900 rounded-xl overflow-hidden shadow-lg">
+            <iframe 
+                src="<%= @exercise[:video_url] %>" 
+                class="w-full h-full"
+                frameborder="0" 
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                allowfullscreen>
+            </iframe>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+<% else %>
+  <!-- Fallback if exercise not found -->
+  <div class="bg-white rounded-xl shadow-lg p-8 text-center">
+    <div class="text-6xl mb-4">⚠️</div>
+    <h2 class="text-3xl font-bold text-red-600 mb-4">Errore: test Non Trovato</h2>
+    <p class="text-gray-600 text-lg mb-8">
+      Non riusciamo a caricare l'test per questo step.
+    </p>
+    <%= link_to "Torna all'Inizio", step_assessments_path(test: 1), 
+        class: "bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-8 rounded-lg transition-all hover:scale-105" %>
+  </div>
+<% end %>

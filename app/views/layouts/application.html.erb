@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="it">
   <head>
     <title><%= content_for(:title) || "Evaluemobility" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -7,35 +7,34 @@
     <meta name="mobile-web-app-capable" content="yes">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
-
     <%= yield :head %>
-
     <%# Enable PWA manifest for installable apps (make sure to enable in config/routes.rb too!) %>
     <%#= tag.link rel: "manifest", href: pwa_manifest_path(format: :json) %>
-
     <link rel="icon" href="/icon.png" type="image/png">
     <link rel="icon" href="/icon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/icon.png">
-
     <%# Includes all stylesheet files in app/assets/stylesheets %>
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
   </head>
-
-  <body class="bg-gray-50 min-h-screen">
-    <div class="container mx-auto px-4 py-8">
-      <header class="text-center mb-8">
-        <h1 class="text-4xl font-bold text-gray-800 mb-2"> Valutazione Mobilità Articolare</h1>
-        <p class="text-gray-600">Metodo PosturaCorretta - Scheda di valutazione semplificata</p>
-      </header>
-      
-      <main>
-        <%= yield %>
-      </main>
-      
-      <footer class="text-center mt-12 text-gray-500 text-sm">
-        <p>&copy; 2024 IgienePosturale.it - Valutazione Mobilità Articolare</p>
-      </footer>
-    </div>
+  <body class="min-h-screen bg-gray-50 ">
+    <!-- Header -->
+    <!-- Flash Messages -->
+    <% flash.each do |type, message| %>
+      <div class="<%= flash_class(type) %> px-4 py-3 rounded mb-4 mx-4 mt-4">
+        <%= message %>
+      </div>
+    <% end %>
+    <!-- Main Content -->
+    <%= yield %>
+    <!-- Footer (optional) -->
+    <footer class="bg-gray-800 text-white py-8 ">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center">
+          <p>&copy; <%= Date.current.year %> PosturaCorretta All rights reserved.</p>
+        </div>
+      </div>
+    </footer>
+    <!-- JavaScript -->
   </body>
 </html>

@@ -17,7 +17,7 @@ class CreateAssessments < ActiveRecord::Migration[8.0]
       t.integer :current_step, default: 1
 
       # Exercise scores (0-3, nullable until completed)
-      t.integer :flexion_extension
+      t.integer :standing_spinal_flexion_test
       t.integer :arms_overhead
       t.integer :spine_rotation_right
       t.integer :spine_rotation_left

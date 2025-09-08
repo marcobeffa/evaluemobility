@@ -4,15 +4,15 @@ class AssessmentsController < ApplicationController
   before_action :set_assessment, only: [ :show, :result ]
 
   def start
-    redirect_to step_assessments_path(esercizio: 1)
+    redirect_to step_assessments_path(test: 1)
   end
 
   def step
-    @current_step = params[:esercizio].to_i
+    @current_step = params[:test].to_i
 
     # Validate step number
     if @current_step < 1 || @current_step > 10
-      redirect_to step_assessments_path(esercizio: 1) and return
+      redirect_to step_assessments_path(test: 1) and return
     end
 
     @assessment.current_step = @current_step
@@ -26,7 +26,7 @@ class AssessmentsController < ApplicationController
   end
 
   def update_step
-    @current_step = params[:esercizio].to_i
+    @current_step = params[:test].to_i
     @assessment.current_step = @current_step
 
     if @assessment.update(assessment_params_for_step(@current_step))
@@ -37,7 +37,7 @@ class AssessmentsController < ApplicationController
       else
         next_step = @current_step + 1
         if next_step <= 10
-          redirect_to step_assessments_path(esercizio: next_step)
+          redirect_to step_assessments_path(test: next_step)
         else
           redirect_to review_assessments_path
         end
@@ -57,7 +57,7 @@ class AssessmentsController < ApplicationController
     else
       # Find first incomplete step
       incomplete_step = find_first_incomplete_step
-      redirect_to step_assessments_path(esercizio: incomplete_step)
+      redirect_to step_assessments_path(test: incomplete_step)
     end
   end
 
@@ -96,7 +96,7 @@ class AssessmentsController < ApplicationController
   end
 
   def find_first_incomplete_step
-    return 1 if @assessment.flexion_extension.nil?
+    return 1 if @assessment.standing_spinal_flexion_test.nil?
     return 2 if @assessment.arms_overhead.nil?
     return 3 if @assessment.spine_rotation_right.nil?
     return 4 if @assessment.spine_rotation_left.nil?
@@ -112,7 +112,7 @@ class AssessmentsController < ApplicationController
   def assessment_params_for_step(step)
     case step
     when 1
-      params.require(:assessment).permit(:flexion_extension)
+      params.require(:assessment).permit(:standing_spinal_flexion_test)
     when 2
       params.require(:assessment).permit(:arms_overhead)
     when 3
